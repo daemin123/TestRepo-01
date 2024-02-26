@@ -1,0 +1,78 @@
+git reset --hard
+git reset --soft 
+git restore --staged filename --> filename 파일 삭제
+git rm --cached filename --> filename 파일 삭제
+git branch branch명 --> branch 생성
+git switch branch명  --> branch 변경
+git merge branch명 --> branch명 병합
+git merge --abort 충돌 무시
+git merge --continue 충돌 issue 해결 후 병합할 때 사용
+
+// 문제
+새폴더에서 git init 명령어 사용
+git init
+
+aaa.txt 파일 추가 후 내용 입력 SA에 내용 추가 commit(message V0.0)
+git add *
+git commit -m "V0.0"
+
+bbb.txt 파일 추가 후 내용 입력 SA에 내용 추가 commit(message V0.1)
+git add *
+git commit -m "V0.1"
+
+ccc.txt 파일 추가 후 내용 입력 SA에 내용 추가 commit(message V0.2)
+git add *
+git commit -m "V0.2"
+
+branch 생성(dev,feature)
+git branch dev
+git branch feature
+
+feature branch에서 작업 진행
+git switch feature
+
+feature에서 ddd.txt 파일 생성 후 내용 입력 후 commit (V0.3)
+git add *
+git commit -m "V0.3"
+
+feature에서 dev으로 merging 작업 수행
+git switch dev
+git merge feature
+
+dev branch에서 aaa.txt 내용 추가 후 commit (V0.4 by dev)
+git add *
+git commit -m "V0.4 by dev"
+
+feature branch에서 aaa.txt 내용 추가 후 commit (V0.4 by feature)
+git switch feature
+git add *
+git commit -m "V0.4 by feature"
+
+Conflict 해결 이후 dev에 병합
+git switch dev
+git merge feature
+git merge --continue
+git add *
+:wq
+
+dev 내용 master에 병합
+git switch master
+git merge dev
+
+git branch -M main >> branch 명 main 변경 후 switch
+git remote add origin url
+git remote -v
+
+git push --set-upstream origin main
+git push origin
+
+
+
+Local Repository -> Remote Repository (git push)
+
+Local Repository <- Remote Repository (git pull)
+
+Local Repositotu <- Remote Repository (git clone)
+
+
+
