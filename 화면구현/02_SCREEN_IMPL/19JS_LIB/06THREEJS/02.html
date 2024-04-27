@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Three.js Cube Example with Drag and Drop</title>
+    <style>
+      body { margin: 0; }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/build/three.min.js"></script>
+    <script>
+      // Scene 생성
+      const scene = new THREE.Scene();
+     
+      
+      // Camera 생성
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      
+      // Renderer 생성
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x808080); // 배경색
+      document.body.appendChild(renderer.domElement);
+      
+      // Cube 생성
+      const geometry = new THREE.BoxGeometry();
+      const material = new THREE.MeshBasicMaterial({ color:'orange' });
+      const cube = new THREE.Mesh(geometry, material);
+      scene.add(cube);
+      // 큐브의 경계선을 위한 라인 생성
+      const edges = new THREE.EdgesGeometry(geometry);
+      const lineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 }); // 라인 색상
+      const wireframe = new THREE.LineSegments(edges, lineMaterial);
+      cube.add(wireframe);
+
+      // 드래그 앤 드롭 변수
+      let isDragging = false;
+      let previousMousePosition = {
+        x: 0,
+        y: 0
+      };
+
+      // 마우스 이벤트 처리
+      document.addEventListener('mousedown', onMouseDown);
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+
+      // 마우스를 눌렀을 때 실행되는 함수
+      function onMouseDown(event) {
+        isDragging = true;
+        previousMousePosition = {
+          x: event.clientX,
+          y: event.clientY
+        };
+      }
+
+      // 마우스를 움직였을 때 실행되는 함수
+      function onMouseMove(event) {
+        if (!isDragging) return;
+
+        const deltaMove = {
+          x: event.clientX - previousMousePosition.x,
+          y: event.clientY - previousMousePosition.y
+        };
+
+        const deltaRotationQuaternion = new THREE.Quaternion()
+          .setFromEuler(new THREE.Euler(
+            toRadians(deltaMove.y * 1),
+            toRadians(deltaMove.x * 1),
+            0,
+            'XYZ'
+          ));
+
+        cube.quaternion.multiplyQuaternions(deltaRotationQuaternion, cube.quaternion);
+
+        previousMousePosition = {
+          x: event.clientX,
+          y: event.clientY
+        };
+      }
+
+      // 마우스 버튼을 놓았을 때 실행되는 함수
+      function onMouseUp() {
+        isDragging = false;
+      }
+
+      // 각도를 라디안으로 변환하는 함수
+      function toRadians(angle) {
+        return angle * (Math.PI / 180);
+      }
+      
+      // Camera 위치 설정
+      camera.position.z = 3;
+      
+      // 애니메이션 함수
+      function animate() {
+        requestAnimationFrame(animate);
+      
+        // Cube 회전
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+      
+        renderer.render(scene, camera);
+      }
+     
+        // Cube의 위치 조정
+        cube.position.set(1, 1, 0); // x, y, z 좌표를 조정하여 원하는 위치로 이동시킴
+
+
+      // 애니메이션 시작
+      animate();
+    </script>
+  </body>
+</html>

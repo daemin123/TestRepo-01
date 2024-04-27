@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- 중구.js -->
+    <script src="js/중구.js"></script>
+</head>
+<body>
+    
+    <div style="width:500px;height:500px;border:1px solid;padding:15px;margin:10px auto;">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        //DataArray추출
+        const arr =  중구맛집.data;
+        //console.log(arr);
+
+        //FD_CS(음식카테고리) 만 가져오기
+        const arr_fd_cs = arr.map((item)=>{return item.FD_CS});
+        //console.log(arr_fd_cs);
+
+        //카테고리 별로 누적
+        const catAcc =  arr_fd_cs.reduce((acc,item)=>{
+            //console.log(item);      
+            if(acc.hasOwnProperty(item)){
+                acc[item] += 1;   
+            }else{
+                acc[item] = 1;
+            }
+            return acc;
+        },{});
+        
+        console.log(catAcc);
+        const cat_keys = Object.keys(catAcc);   //모든 키 추출
+        const cat_values = Object.values(catAcc);   //모든 키 추출
+        console.log(cat_keys)
+        console.log(cat_values)
+        const bg_color =['#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF','#FF9F40','#8181F7','#36A2EB']
+        const border_color =['#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF','#FF9F40','#8181F7','#36A2EB']
+
+
+        const drawChart = (labelsArr,dataSet)=>{
+
+            //차트 데이터 
+            var data = {
+                    labels : labelsArr,
+                    datasets:[{
+                        label:'FD_CS',
+                        data : dataSet,
+                        backgroundColor:bg_color,
+                        borderColor:border_color,
+                        borderWidth:1
+                    }]
+
+            }
+
+            //차트 옵션(범례,x/y축,animation,layout,plugin..)
+            var options = {
+                scales : {
+                    y : {
+                        beginAtZero : true,
+                    }
+                },
+                onClick:(event,chartEl)=>{
+                console.log("event",event);
+                
+                const index = chartEl[0].index;
+                const label = data.labels[index];
+                const value = data.datasets[0].data[index]
+                console.log("index : " ,index);
+                console.log("label : ", label);
+                console.log("value : ", value);
+                
+                alert(label + " : " + value);
+
+            }
+            }
+
+            //캔버스 요소 선택
+            var ctx = document.querySelector('#myChart').getContext('2d');
+            //차트 객체 생성
+
+            var myChart = new Chart(ctx,{
+                type:'pie', //bar,line , pie , doughnut, radar, bubble, scatter,    heatmap
+                data:data,
+                options : options
+            })
+        }
+        drawChart(cat_keys,cat_values);
+    </script>
+</body>
+</html>

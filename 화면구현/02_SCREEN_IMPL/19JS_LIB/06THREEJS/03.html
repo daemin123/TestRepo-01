@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Three.js Cube Example with Drag and Drop</title>
+    <style>
+      body { margin: 0; }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/build/three.min.js"></script>
+    <script>
+      // Scene 생성
+      const scene = new THREE.Scene();
+     
+      
+      // Camera 생성
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      
+      // Renderer 생성
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x808080); // 배경색
+      document.body.appendChild(renderer.domElement);
+      
+      // Cube 생성
+      const geometry = new THREE.BoxGeometry();
+      const material = new THREE.MeshBasicMaterial({ color:'orange' });
+      const cube = new THREE.Mesh(geometry, material);
+      scene.add(cube);
+      // 큐브의 경계선을 위한 라인 생성
+      const edges = new THREE.EdgesGeometry(geometry);
+      const lineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 }); // 라인 색상
+      const wireframe = new THREE.LineSegments(edges, lineMaterial);
+      cube.add(wireframe);
+
+      // 드래그 앤 드롭 변수
+      let isDragging = false;
+      let previousMousePosition = {
+        x: 0,
+        y: 0
+      };
+
+      // 마우스 이벤트 처리
+      document.addEventListener('mousedown', onMouseDown);
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+
+      // 마우스를 눌렀을 때 실행되는 함수
+      function onMouseDown(event) {
+        isDragging = true;
+        previousMousePosition = {
+          x: event.clientX,
+          y: event.clientY
+        };
+      }
+
+      // 마우스를 움직였을 때 실행되는 함수
+      function onMouseMove(event) {
+        if (!isDragging) return;
+
+        const deltaMove = {
+          x: event.clientX - previousMousePosition.x,
+          y: event.clientY - previousMousePosition.y
+        };
+
+        const deltaRotationQuaternion = new THREE.Quaternion()
+          .setFromEuler(new THREE.Euler(
+            toRadians(deltaMove.y * 1),
+            toRadians(deltaMove.x * 1),
+            0,
+            'XYZ'
+          ));
+
+        cube.quaternion.multiplyQuaternions(deltaRotationQuaternion, cube.quaternion);
+
+        previousMousePosition = {
+          x: event.clientX,
+          y: event.clientY
+        };
+      }
+
+      // 마우스 버튼을 놓았을 때 실행되는 함수
+      function onMouseUp() {
+        isDragging = false;
+      }
+
+      // 각도를 라디안으로 변환하는 함수
+      function toRadians(angle) {
+        return angle * (Math.PI / 180);
+      }
+      
+      // Camera 위치 설정
+      camera.position.z = 3;
+      
+      // 애니메이션 함수
+      function animate() {
+        requestAnimationFrame(animate);
+      
+        // Cube 회전
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+      
+        renderer.render(scene, camera);
+      }
+     
+        // Cube의 위치 조정
+        cube.position.set(1, 1, 0); // x, y, z 좌표를 조정하여 원하는 위치로 이동시킴
+
+
+      // 애니메이션 시작
+      animate();
+
+      // 키보드 이벤트 처리
+document.addEventListener('keydown', onKeyPress);
+
+// 키보드 입력을 처리하는 함수
+function onKeyPress(event) {
+  const moveDistance = 0.1; // 이동 거리
+
+  switch (event.code) {
+    case 'ArrowUp': // 위쪽 방향키
+      cube.position.y += moveDistance;
+      break;
+    case 'ArrowDown': // 아래쪽 방향키
+      cube.position.y -= moveDistance;
+      break;
+    case 'ArrowLeft': // 왼쪽 방향키
+      cube.position.x -= moveDistance;
+      break;
+    case 'ArrowRight': // 오른쪽 방향키
+      cube.position.x += moveDistance;
+      break;
+    default:
+      break;
+  }
+}
+    </script>
+
+    <script>
+      // Scene (장면):
+
+      // Three.js에서 모든 3D 객체들이 배치되는 가상의 공간입니다.
+      // 장면(Scene)은 카메라에 의해 렌더링되고 화면에 보여집니다.
+      // 세계의 배경이나 조명, 그리고 3D 객체들의 위치 등을 포함합니다.
+      // Camera (카메라):
+
+      // 3D 장면을 보여주는 시점을 결정합니다.
+      // 장면에 어떤 부분을 보여줄 것인지, 어떤 각도로 보여줄 것인지를 정의합니다.
+      // 종류로는 PerspectiveCamera(원근 카메라)나 OrthographicCamera(등각 카메라) 등이 있습니다.
+      // Renderer (렌더러):
+
+      // Three.js 장면을 브라우저에 렌더링하고 화면에 표시합니다.
+      // WebGLRenderer는 WebGL을 사용하여 3D 그래픽을 렌더링합니다.
+      // WebGL을 지원하지 않는 브라우저에 대비해 CanvasRenderer 등 다양한 렌더러가 있습니다.
+      // Cube (큐브):
+
+      // Three.js에서 3D 객체를 만드는 기본적인 요소 중 하나입니다.
+      // CubeGeometry와 같은 기하학적 모양과, MeshBasicMaterial과 같은 재질을 결합하여 생성됩니다.
+      // 다양한 속성과 메서드를 사용하여 큐브의 모양, 위치, 회전 등을 제어할 수 있습니다.
+
+    </script>
+  </body>
+</html>
